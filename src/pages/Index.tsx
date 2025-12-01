@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import SlotMachine from '@/components/SlotMachine';
+import DepositModal from '@/components/DepositModal';
 
 const slots = [
   { id: 1, name: 'Золотой Джекпот', min: '100₽', max: '1,000,000₽', hot: true },
@@ -31,6 +32,11 @@ export default function Index() {
   const [balance, setBalance] = useState(12500);
   const [bonus] = useState(5000);
   const [activeSlot, setActiveSlot] = useState<string | null>(null);
+  const [showDeposit, setShowDeposit] = useState(false);
+
+  const handleDeposit = (amount: number) => {
+    setBalance(prev => prev + amount);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -52,7 +58,10 @@ export default function Index() {
                 <div className="text-sm text-muted-foreground">Баланс</div>
                 <div className="text-lg font-bold text-primary">{balance.toLocaleString()}₽</div>
               </div>
-              <Button className="gold-gradient font-bold">
+              <Button 
+                className="gold-gradient font-bold"
+                onClick={() => setShowDeposit(true)}
+              >
                 <Icon name="Plus" size={16} className="mr-1" />
                 Пополнить
               </Button>
@@ -337,6 +346,14 @@ export default function Index() {
           onClose={() => setActiveSlot(null)}
           balance={balance}
           onBalanceChange={setBalance}
+        />
+      )}
+
+      {showDeposit && (
+        <DepositModal
+          onClose={() => setShowDeposit(false)}
+          balance={balance}
+          onDeposit={handleDeposit}
         />
       )}
     </div>
