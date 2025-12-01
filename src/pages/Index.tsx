@@ -5,14 +5,16 @@ import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import SlotMachine from '@/components/SlotMachine';
 import DepositModal from '@/components/DepositModal';
+import Blackjack from '@/components/Blackjack';
 
 const slots = [
-  { id: 1, name: 'Золотой Джекпот', min: '100₽', max: '1,000,000₽', hot: true },
-  { id: 2, name: 'Алмазная Удача', min: '50₽', max: '500,000₽', hot: false },
-  { id: 3, name: 'Королевский Покер', min: '200₽', max: '2,000,000₽', hot: true },
-  { id: 4, name: 'Фруктовый Рай', min: '25₽', max: '250,000₽', hot: false },
-  { id: 5, name: 'Огненная Рулетка', min: '150₽', max: '1,500,000₽', hot: true },
-  { id: 6, name: 'Мега Фортуна', min: '300₽', max: '3,000,000₽', hot: false },
+  { id: 1, name: 'Золотой Джекпот', min: '100₽', max: '1,000,000₽', hot: true, type: 'slot' },
+  { id: 2, name: 'Алмазная Удача', min: '50₽', max: '500,000₽', hot: false, type: 'slot' },
+  { id: 3, name: 'Королевский Покер', min: '200₽', max: '2,000,000₽', hot: true, type: 'slot' },
+  { id: 4, name: 'Фруктовый Рай', min: '25₽', max: '250,000₽', hot: false, type: 'slot' },
+  { id: 5, name: 'Огненная Рулетка', min: '150₽', max: '1,500,000₽', hot: true, type: 'slot' },
+  { id: 6, name: 'Мега Фортуна', min: '300₽', max: '3,000,000₽', hot: false, type: 'slot' },
+  { id: 7, name: 'Блэкджек', min: '50₽', max: '5,000₽', hot: true, type: 'blackjack' },
 ];
 
 const promos = [
@@ -33,9 +35,18 @@ export default function Index() {
   const [bonus] = useState(5000);
   const [activeSlot, setActiveSlot] = useState<string | null>(null);
   const [showDeposit, setShowDeposit] = useState(false);
+  const [showBlackjack, setShowBlackjack] = useState(false);
 
   const handleDeposit = (amount: number) => {
     setBalance(prev => prev + amount);
+  };
+
+  const handleGameClick = (game: typeof slots[0]) => {
+    if (game.type === 'blackjack') {
+      setShowBlackjack(true);
+    } else {
+      setActiveSlot(game.name);
+    }
   };
 
   return (
@@ -138,7 +149,7 @@ export default function Index() {
                 >
                   <div className="h-48 bg-gradient-to-br from-secondary via-secondary to-card relative overflow-hidden">
                     <div className="absolute inset-0 flex items-center justify-center text-7xl opacity-50 group-hover:scale-110 transition-transform">
-                      🎰
+                      {slot.type === 'blackjack' ? '🃏' : '🎰'}
                     </div>
                     {slot.hot && (
                       <Badge className="absolute top-3 right-3 bg-accent animate-pulse-glow">
@@ -161,7 +172,7 @@ export default function Index() {
                   <CardContent>
                     <Button 
                       className="w-full gold-gradient font-bold"
-                      onClick={() => setActiveSlot(slot.name)}
+                      onClick={() => handleGameClick(slot)}
                     >
                       Играть сейчас
                     </Button>
@@ -354,6 +365,14 @@ export default function Index() {
           onClose={() => setShowDeposit(false)}
           balance={balance}
           onDeposit={handleDeposit}
+        />
+      )}
+
+      {showBlackjack && (
+        <Blackjack
+          onClose={() => setShowBlackjack(false)}
+          balance={balance}
+          onBalanceChange={setBalance}
         />
       )}
     </div>
