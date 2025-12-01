@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
+import SlotMachine from '@/components/SlotMachine';
 
 const slots = [
   { id: 1, name: 'Золотой Джекпот', min: '100₽', max: '1,000,000₽', hot: true },
@@ -27,8 +28,9 @@ const tournaments = [
 
 export default function Index() {
   const [activeSection, setActiveSection] = useState('slots');
-  const [balance] = useState(12500);
+  const [balance, setBalance] = useState(12500);
   const [bonus] = useState(5000);
+  const [activeSlot, setActiveSlot] = useState<string | null>(null);
 
   return (
     <div className="min-h-screen bg-background">
@@ -148,7 +150,10 @@ export default function Index() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <Button className="w-full gold-gradient font-bold">
+                    <Button 
+                      className="w-full gold-gradient font-bold"
+                      onClick={() => setActiveSlot(slot.name)}
+                    >
                       Играть сейчас
                     </Button>
                   </CardContent>
@@ -325,6 +330,15 @@ export default function Index() {
           </div>
         </div>
       </footer>
+
+      {activeSlot && (
+        <SlotMachine
+          slotName={activeSlot}
+          onClose={() => setActiveSlot(null)}
+          balance={balance}
+          onBalanceChange={setBalance}
+        />
+      )}
     </div>
   );
 }
